@@ -315,3 +315,16 @@ display_scores(rmse_scores)
 lin_scores = cross_val_score(lin_reg, housing_prepared, housing_labels, scoring="neg_mean_squared_error", cv=10)
 lin_rmse_scores = np.sqrt(-lin_scores)
 display_scores(lin_rmse_scores)
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestRegressor
+
+param_grid = [
+    {'n_estinators': [3, 10 , 30], 'max_features':[2,4,6,8]},
+    {'bootstrap':[False], 'n_estimators': [3,10], 'max_features':[2, 3, 4]}
+]
+
+forest_reg = RandomForestRegressor()
+grid_search = GridSearchCV(forest_reg, param_grid, cv=5, scoring='neg_mean_squared_error')
+grid_search.fit(housing_prepared, housing_labels)
+print grid_search.best_params_
