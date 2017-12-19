@@ -12,9 +12,9 @@ csv_path = os.path.join("datasets/housing", "housing.csv")
 csv_data = load_data(csv_path)
 target = csv_data["ocean_proximity"].copy()
 # target = target.values.tolist()
-target = np.array(target)
-target.reshape(-1,1)
-print type(target)
+# target = np.array(target)
+# target.reshape(-1,1)
+print target
 
 # columns = csv_data.to_dict('split')
 # columns = columns['columns']
@@ -25,9 +25,8 @@ csv_data = csv_data.drop("ocean_proximity", axis=1)
 csv_data = csv_data.to_dict('records')
 v = DictVectorizer(sparse=False)
 X = v.fit_transform(csv_data)
-print type(X)
+print X
 
-# data_to_check = np.array([1.13800000e+03,   2.10000000e+01,   3.78600000e+01, -1.22220000e+02,   3.58500000e+05,   8.30140000e+00,   2.40100000e+03,  1.10600000e+03,   7.09900000e+03])
 forest_reg = RandomForestRegressor()
 # forest_reg.fit(X, target)
 #
@@ -35,10 +34,9 @@ forest_reg = RandomForestRegressor()
 
 parameters = [{'n_estimators': [3, 10, 30], 'max_features': [2, 4, 6, 8]}, {'bootstrap': [False], 'n_estimators': [3, 10], 'max_features': [2, 3, 4]},]
 # svc = svm.SVC()
-clf = RandomizedSearchCV(forest_reg, parameters, cv=5, scoring='neg_mean_squared_error')
+clf = GridSearchCV(forest_reg, parameters, cv=5, scoring='neg_mean_squared_error')
 clf.fit(X, target)
 # print clf.best_params_
-# print clf.predict([1.13800000e+03,   2.10000000e+01,   3.78600000e+01, -1.22220000e+02,   3.58500000e+05,   8.30140000e+00,   2.40100000e+03,  1.10600000e+03,   7.09900000e+03])
 
 
 
