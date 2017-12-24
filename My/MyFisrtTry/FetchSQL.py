@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import Imputer, normalize, Normalizer
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def encodeData(pdData):
@@ -39,14 +40,29 @@ def removeRowMiss(df):
     #     df.dropna(subset=[col])
     return df
 
-def printAllUnique(df):
-    df = df.reset_index()
+def printAllUnique(df, flag):
+    dfData = df
+    allUnique = []
     for col in df:
         colUnique = []
         for i in range(0, len(df.index)):
             if df[col][i] not in colUnique:
                 colUnique.append(df[col][i])
-    print sorted(colUnique)
+        if flag:
+            for i in range(0, len(allUnique)):
+                   if allUnique[i] == colUnique:
+                       del dfData[col]
+        print colUnique
+        allUnique.append((sorted(colUnique[:])))
+    return dfData
+
+def checkSimilarity(df):
+    df_norm = pd.DataFrame()
+    for col in df:
+        oneCol = (df[col] - df[col].mean()) / (df[col].max() - df[col].min())
+        df_norm = df_norm.append(oneCol)
+    df_norm = df_norm.T
+    return df_norm
 
 
 
@@ -67,15 +83,11 @@ for col in columnsICantUse:
 print df
 encoded_pd = encodeData(df)
 dfClean = removeRowMiss(encoded_pd)
-print dfClean
+print type(dfClean)
 
-temp1 = dfClean["transmission_date"]
-temp2 = dfClean["episode"]
+dfNorm = checkSimilarity(dfClean)
+dfWithoutDouble = printAllUnique(dfNorm, True)
 
-df_norm = (temp1 - temp1.mean()) / (temp1.max() - temp1.min())
-printAllUnique(df_norm)
-df_norm = (temp2 - temp2.mean()) / (temp2.max() - temp2.min())
-printAllUnique(df_norm)
 
 # printAllUnique(dfClean)
 # temp = dfClean["record_date"]
