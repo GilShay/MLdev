@@ -36,6 +36,22 @@ sgd_clf.fit(X_train, y_train_5)
 print sgd_clf
 print sgd_clf.predict([some_digit])
 
+from sklearn.model_selection import StratifiedKFold
+from sklearn.base import clone
+
+skfolds = StratifiedKFold(n_splits=3, random_state=42)
+
+for train_index, test_index in skfolds.split(X_train, y_train_5):
+    clone_clf = clone(sgd_clf)
+    X_train_folds = X_train[train_index]
+    y_train_folds = (y_train_5[train_index])
+    X_test_fold = X_train[test_index]
+    y_test_fold = (y_train_5[test_index])
+    clone_clf.fit(X_train_folds, y_train_folds)
+    y_pred = clone_clf.predict(X_test_fold)
+    print y_pred
+    n_correct = sum(y_pred == y_test_fold)
+    print(n_correct / len(y_pred))
 
 from sklearn.model_selection import cross_val_score
 print cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring="accuracy")
@@ -57,3 +73,6 @@ from sklearn.metrics import confusion_matrix
 print confusion_matrix(y_train_5, y_train_pred)
 
 ####Precision and Recall
+from sklearn.metrics import precision_score, recall_score
+# print precision_score(y_train_5, y_pred)
+# print recall_score(y_train_5, y_train_pred)
