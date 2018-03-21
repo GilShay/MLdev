@@ -57,7 +57,7 @@ def cleanData(df):
     columnsICantUse = []
     for paramNames in list(df):
         for count in df[paramNames].value_counts():
-            if count < allDataCount * 0.01:
+            if count < allDataCount * 0.01 and count == 1:
                 columnsICantUse.append(paramNames)
                 break
     return columnsICantUse
@@ -114,13 +114,25 @@ def checkSimilarity(df):
 #     return df_norm
 
 
+def checkColumnsMultiplyNames(df):
+    colNames = list(df)
+    dfOneTime = df
+    for i in df:
+        temp = i + ".1"
+        if temp in colNames:
+            print "I can't work like this you gave me several columns with the same name, so removing %s once"%i
+            del dfOneTime[temp]
+    return dfOneTime
+
+
 def strongCorrOfData(df, percent):
     percent = percent*0.01
     corr_matrix = df.corr()
+    myCounter = 0
     for col in corr_matrix:
-        for i in range(0, len(corr_matrix[col])):
+        for i in range(myCounter, len(corr_matrix[col])):
             if (abs(corr_matrix[col][i]) > percent) & (corr_matrix[col][i] != 1):
                 print ("There is corrolation between %s and %s about %s"%(col, corr_matrix.index[i], corr_matrix[col][i]))
-
+        myCounter = myCounter + 1
 
 
