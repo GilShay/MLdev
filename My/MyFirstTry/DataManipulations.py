@@ -129,10 +129,21 @@ def strongCorrOfData(df, percent):
     percent = percent*0.01
     corr_matrix = df.corr()
     myCounter = 0
+    anotherCounter = 0
+    interestingSubjects = {}
     for col in corr_matrix:
         for i in range(myCounter, len(corr_matrix[col])):
+            if (corr_matrix[col][i] == 1):
+                if col is not corr_matrix.index[i]:
+                    print ("%s and %s have the same values, I'm not taking them into account"%(col, corr_matrix.index[i]))
             if (abs(corr_matrix[col][i]) > percent) & (corr_matrix[col][i] != 1):
-                print ("There is corrolation between %s and %s about %s"%(col, corr_matrix.index[i], corr_matrix[col][i]))
+                anotherCounter = anotherCounter + 1
+                strCounter = str(anotherCounter)
+                print ("%s. There is corrolation between %s and %s about %s"%(anotherCounter, col, corr_matrix.index[i], corr_matrix[col][i]))
+                interestingSubjects[strCounter] = [col, corr_matrix.index[i]]
         myCounter = myCounter + 1
+    return interestingSubjects
+
+
 
 
