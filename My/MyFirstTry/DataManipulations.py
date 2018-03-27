@@ -145,5 +145,17 @@ def strongCorrOfData(df, percent):
     return interestingSubjects
 
 
-
+def checkSmallestDistribution(df):
+    distributionCounter = 0
+    masterCounter = float("inf")
+    dataCon = []
+    for col in df:
+        for i in df[col]:
+            if i not in dataCon:
+                distributionCounter = distributionCounter + 1
+                dataCon.append(i)
+        if distributionCounter < masterCounter:
+            masterCounter = distributionCounter
+            chosenCol = col
+    return chosenCol
 
