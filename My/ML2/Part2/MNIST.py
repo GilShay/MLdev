@@ -51,7 +51,7 @@ for train_index, test_index in skfolds.split(X_train, y_train_5):
     y_pred = clone_clf.predict(X_test_fold)
     print y_pred
     n_correct = sum(y_pred == y_test_fold)
-    print(n_correct / len(y_pred))
+    print float(n_correct)/len(y_pred)
 
 from sklearn.model_selection import cross_val_score
 print cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring="accuracy")
