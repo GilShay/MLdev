@@ -71,10 +71,84 @@ y_train_pred = cross_val_predict(sgd_clf,X_train, y_train_5, cv=3)
 
 from sklearn.metrics import confusion_matrix
 print confusion_matrix(y_train_5, y_train_pred)
+confusionMatrix = confusion_matrix(y_train_5, y_train_pred)
 
 ####Precision and Recall
 from sklearn.metrics import precision_score, recall_score
-# print precision_score(y_train_5, y_pred)
+truePositive = float(confusionMatrix[1, 1])
+falseNegative = float(confusionMatrix[1, 0])
+falsePositive = float(confusionMatrix[0, 1])
+print truePositive, falseNegative, falsePositive
+
+
+precisionScore = truePositive/(truePositive + falsePositive)
+recallScore = truePositive/(truePositive + falseNegative)
+f1Score = 2*((precisionScore*recallScore)/(precisionScore+recallScore))
+print recallScore, precisionScore, f1Score
+# precision_score(y_train_5, y_pred)
 # print recall_score(y_train_5, y_train_pred)
 
 ####Precision/Recall Tradeoff
+y_scores = sgd_clf.decision_function([some_digit])
+print y_scores
+threshold = 0
+y_some_digit_pred = (y_scores > threshold)
+print y_some_digit_pred
+
+threshold = 200000
+y_some_digit_pred = (y_scores > threshold)
+print y_some_digit_pred
+
+y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3, method="decision_function")
+# print y_scores
+
+from sklearn.metrics import precision_recall_curve
+precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)
+print precisions, recalls, thresholds
+
+def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+    plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
+    plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
+    plt.xlabel("Threshold")
+    plt.legend(loc="upper left")
+    plt.ylim([0, 1])
+
+plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
+plt.show()
+
+y_train_pred_90 = (y_scores > 70000)
+print precision_score(y_train_5, y_train_pred_90)
+print recall_score(y_train_5, y_train_pred_90)
+
+from sklearn.metrics import roc_curve
+fpr, tpr, thresholds = roc_curve(y_train_5, y_scores)
+print fpr, tpr, thresholds
+
+def plot_roc_curve(fpr, tpr, label=None):
+    plt.plot(fpr, tpr, linewidth=2, label=label)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.axis([0, 1, 0, 1])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+
+plot_roc_curve(fpr, tpr)
+plt.show()
+
+from sklearn.metrics import roc_auc_score
+print roc_auc_score(y_train_5, y_scores)
+
+from sklearn.ensemble import RandomForestClassifier
+
+forest_clf = RandomForestClassifier(random_state=42)
+y_probas_forest = cross_val_predict(forest_clf, X_train, y_train_5, cv=3, method="predict_proba")
+print y_probas_forest
+
+y_scores_forest = y_probas_forest[:, 1]
+print y_scores_forest
+fpr_forest, tpr_forest, thresholds_forest = roc_curve(y_train_5, y_scores_forest)
+
+plt.plot(fpr,tpr, "b:", label="SDG")
+plot_roc_curve(fpr_forest, tpr_forest, "Random Forest")
+plt.legend(loc="bottom right")
+plt.show()
+print roc_auc_score(y_train_5, y_scores_forest)
