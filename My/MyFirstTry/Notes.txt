@@ -1,0 +1,7 @@
+notes:
+1. Inverse the matrix in order to check also the rows anf not only the columns.
+2. Use the correct naming of objects after encoding it.
+3. New tool which allows the user to focus on specific subject/parameter/values in the data.
+4. Handle column with combination of both strings and floats.
+5. Write a decoder function.
+6. Simulate more types of Excel forms
