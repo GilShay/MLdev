@@ -68,6 +68,8 @@ print cross_val_score(never_5_clf, X_train, y_train_5, cv=3, scoring='accuracy')
 
 from sklearn.model_selection import cross_val_predict
 y_train_pred = cross_val_predict(sgd_clf,X_train, y_train_5, cv=3)
+# print y_train_pred
+# print y_train_5
 
 from sklearn.metrics import confusion_matrix
 print confusion_matrix(y_train_5, y_train_pred)
@@ -85,7 +87,7 @@ precisionScore = truePositive/(truePositive + falsePositive)
 recallScore = truePositive/(truePositive + falseNegative)
 f1Score = 2*((precisionScore*recallScore)/(precisionScore+recallScore))
 print recallScore, precisionScore, f1Score
-# precision_score(y_train_5, y_pred)
+# print precision_score(y_train_5, y_pred)
 # print recall_score(y_train_5, y_train_pred)
 
 ####Precision/Recall Tradeoff
@@ -152,3 +154,31 @@ plot_roc_curve(fpr_forest, tpr_forest, "Random Forest")
 plt.legend(loc="bottom right")
 plt.show()
 print roc_auc_score(y_train_5, y_scores_forest)
+
+####Multiclass Classification
+
+sgd_clf.fit(X_train, y_train)
+print sgd_clf.predict([some_digit])
+some_digit_scores = sgd_clf.decision_function([some_digit])
+print some_digit_scores
+print np.argmax(some_digit_scores)
+print sgd_clf.classes_
+# print sgd_clf.classes[5]
+
+from sklearn.multiclass import OneVsOneClassifier
+ovo_clf = OneVsOneClassifier(SGDClassifier(random_state=42))
+ovo_clf.fit(X_train, y_train)
+print ovo_clf.predict([some_digit])
+print len(ovo_clf.estimators_)
+
+forest_clf.fit(X_train, y_train)
+print forest_clf.predict([some_digit])
+print forest_clf.predict_proba([some_digit])
+print cross_val_score(sgd_clf, X_train, y_train, cv=3, scoring="accuracy")
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train.astype(np.float64))
+print cross_val_score(sgd_clf, X_train_scaled, y_train, cv=3, scoring="accuracy")
+
+
