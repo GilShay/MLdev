@@ -235,3 +235,46 @@ plt.subplot(222); plot_digits(X_ab[:25], images_per_row=5)
 plt.subplot(223); plot_digits(X_ba[:25], images_per_row=5)
 plt.subplot(224); plot_digits(X_bb[:25], images_per_row=5)
 plt.show()
+
+
+###Multilabrl Classification
+from sklearn.neighbors import KNeighborsClassifier
+y_train_large = (y_train >= 7)
+print y_train_large
+y_train_odd = (y_train % 2 == 1)
+print y_train_odd
+y_multilabel = np.c_[y_train_large, y_train_odd]
+print y_multilabel
+print X_train
+
+knn_clf = KNeighborsClassifier()
+knn_clf.fit(X_train, y_multilabel)
+print knn_clf.predict([some_digit])
+
+
+# y_train_knn_pred = cross_val_predict(knn_clf, X_train, y_train, cv=3)
+# print f1Score(y_train, y_train_knn_pred, average="macro")
+
+###Multiouput Classification
+from numpy.random import randint
+noise_train = randint(0, 100, (len(X_train), 784))
+print noise_train
+noise_test = randint(0, 100, (len(X_test), 784))
+print noise_test
+X_train_mod = X_train + noise_train
+X_test_mod = X_test + noise_test
+y_train_mod = X_train
+y_test_mod = X_test
+
+knn_clf.fit(X_train_mod, y_train_mod)
+clean_digit = knn_clf.predict([X_test_mod[3600]])
+# plot_digit(clean_digit)
+# plot_digit(X_test[3600])
+plt.figure(figsize=(2,2))
+# plt.subplot(211); plot_digits(clean_digit, images_per_row=1)
+old_digit = X_test[3600].reshape(28, 28)
+plot_digit(clean_digit)
+plt.show()
+plot_digit(X_test[3600])
+# plt.subplot(221); plot_digits(old_digit, images_per_row=1)
+plt.show()
