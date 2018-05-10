@@ -55,4 +55,50 @@ print FP / float(TN + FP)
 print TP / float(TP + FP)
 print metrics.precision_score(y_test,y_pred_class)
 
+print logreg.predict(X_test)[0:10]
+print logreg.predict_proba(X_test)[0:10, :]
+print logreg.predict_proba(X_test)[0:10, 1]
 
+y_pred_prob = logreg.predict_proba(X_test)[:, 1]
+
+import matplotlib.pyplot as plt
+# plt.rcParams['font.size'] = 14
+# plt.hist(y_pred_prob)
+# plt.xlim(0, 1)
+# plt.title('Histogram of predicted probabilities')
+# plt.xlabel('Predicted probability of diabetes')
+# plt.ylabel('Frequency')
+# plt.show()
+
+y_pred_prob = logreg.predict_proba(X_test)
+from sklearn.preprocessing import binarize
+y_pred_class = binarize(y_pred_prob, 0.3)[:, 1]
+print y_pred_prob[0:10, 1]
+print y_pred_class[0:10]
+
+print confusion
+print metrics.confusion_matrix(y_test, y_pred_class)
+print 46 / float(46 + 16)
+print 80 / float(80 + 50)
+
+y_pred_prob = logreg.predict_proba(X_test)[:, 1]
+fpr, tpr, thresholds = metrics.roc_curve(y_test, y_pred_prob)
+plt.plot(fpr, tpr)
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.0])
+plt.title('ROC curve for diabetes classifier')
+plt.xlabel('False Positive Rate(1 - Specificity)')
+plt.ylabel('True Positive Rate(Sensitivity)')
+plt.grid(True)
+plt.show()
+
+def evaluate_threshold(threshold):
+    print 'Sensitivity:', tpr[thresholds > threshold][-1]
+    print 'Specificity:', 1 - fpr[thresholds > threshold][-1]
+
+evaluate_threshold(0.5)
+evaluate_threshold(0.3)
+
+print metrics.roc_auc_score(y_test, y_pred_prob)
+from sklearn.model_selection import cross_val_score
+print cross_val_score(logreg, X, y, cv=10, scoring='roc_auc').mean()
