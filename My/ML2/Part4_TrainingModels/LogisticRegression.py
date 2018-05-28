@@ -20,3 +20,15 @@ plt.plot(X_new, y_proba[:, 0], 'b--', label="Not Iris-Virginica")
 plt.show()
 
 print log_reg.predict([[1.7], [1.5]])
+
+#Softmax Regression
+X = iris["data"][:, (2,3)]
+y = iris["target"]
+
+softmax_reg = LogisticRegression(multi_class="multinomial",  solver="lbfgs", C=10)
+softmax_reg.fit(X, y)
+
+print softmax_reg.predict_proba([[5, 2]])
+print softmax_reg.predict([[5, 2]])
+
+
